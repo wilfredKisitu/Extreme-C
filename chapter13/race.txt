@@ -1,0 +1,236 @@
+Shared state{
+    Done: Boolean = False
+}
+
+Task P {
+    print 'A'
+    Done = True
+}
+
+Task Q {
+    WHILE not Done {return}
+    print 'B;
+}
+
+The order of execution of the instructions is different
+i.e. if a context swtich happens and B receives control
+while A has not yet executed, the execution is adjuned
+
+
+Concurrent system {
+    Task P {
+        print 'A'
+        Nottify Task Q
+    }
+    Task Q {
+        Go to Sleep Mode
+        print 'B'
+    }
+}
+
+EMPLOYING FLAGS AND SLEEP MODES & NOTIFYING
+
+Concurrent System {
+    Share state {
+        Done: Boolean = False
+    }
+
+    Task A {
+        print 'A'
+        Done = True
+        Notify Task Q
+    }
+    Task Q {
+        while not Done {
+            Go to sleep Mode if Done is False (Atomic)
+        }
+        print 'B';
+    }
+}
+
+SEMAPHORES NAD MUTEXES
+
+Concurrent System {
+    Shared State {
+        S: Semaphore which allows only 1 task at a time
+        Counter: Integer = 0
+    }
+    Task P {
+        A: Local Integer
+        EnterCriticalSection(S)
+        A = Counter 
+        A = A + 1
+        Counter =  A 
+        LeavecriticalSection(S)
+    }
+    Task Q {
+        B: Local Integer 
+        EnterCriticalSection(S)
+        B = Counter 
+        B  B + 2
+        Counter = B
+        LeavecriticalSection(S)
+    }
+}
+
+Note: Tasks waiting for their critical selection 
+Open are put to sleep mode instead of busy-wait 
+
+Concurrent system {
+    Shared state {
+        S: Smemaphoe which allows only 1 task at a time
+        Counter: Integer = 0
+    }
+
+    Task P {
+        A : Local Integer
+        Lock(S)
+        A = Counter 
+        A = A + 1
+        Counter = A
+        Unlock(S)
+    }
+    Task Q {
+        B: Local Integer 
+        Lock(S)
+        B = Counter 
+        B = B + 2
+        Counter = B 
+        Unlock(S)
+    }
+    Task Q {
+        B: Local Integer 
+        Lock(S)
+        B = Counter 
+        B = B + 2
+        Counter = B 
+        Unlock(S)
+    }
+}
+
+CACHE CONHERENCE PROTOCOL
+(all values changed in one cache are propagated to all
+ohter local caches and also stored in memory)
+
+Concurrent system {
+    Shared state {
+        Done: Boolean = False
+    }
+    Task P {
+        print 'A'
+        Done = True 
+        Notify  Task Q
+    }
+    Task Q {
+        While Not Done {
+            Go to Sleep Mode if Done is False (Atomic)
+        }
+        print 'B'
+    }
+}
+
+Solution based on memoryc coherence approach
+
+Concurrent system {
+
+    Shared State {
+        Done: Boolean = False
+    }
+
+    Task P {
+        print 'A'
+        Done  = True 
+        Memory Barrier (propagate values to other local caches and main memory)
+        Notify Q
+    }
+    Task Q {
+        Do {
+            Memory Barrier
+            Go to Sleep Mode if Done is False (Atomic)
+        } while Not Done 
+        print 'B'
+    }
+}
+
+SOLUTION 2 USING MUTEXES
+
+Concurrent System {
+    Shared state {
+        Done: Boolean = False
+        M: mutex
+    }
+
+    Task P {
+        print 'A'
+        Lock (M)
+        Done = True 
+        Unlock(M)
+        Notify Task Q
+    }
+    
+    Task Q {
+        Lock(M)
+        while not Done {
+            Go to Sleep Mode And Unlock(M)
+            Lock(M)
+        }
+        Unlock(M)
+        print 'B'
+    }
+}
+
+SPIN LOCKS
+
+Concurrent system {
+    Shared state {
+        Done: Boolean = False 
+        M : Mutex
+    }
+
+    Task P {
+        print 'A'
+        SpinLock(M)
+        Done = True
+        SpineUnlock(M)
+    }
+
+    Task Q {
+        SpinLock(M)
+        while Not Done {
+            SpineUnlock(M)
+            SpinLock(M)
+        }
+        SpineUnlock(M)
+        print 'B'
+    }
+}
+
+MUTEXES PLUS CONDITION VARIABLES
+
+Concurrent System {
+    Shared State {
+        Done: Boolean = False
+        CV: Condition  variable
+        M: Mutex 
+    }
+
+    Task P {
+        print 'A'
+        Lock (M)
+        Done = True 
+        Notify(CV)
+        Unlock (M)
+    }
+    Task Q {
+        Lock(M)
+        while Not Done {
+            Sleep(M, CV)
+        }
+        Unlock(M)
+        print 'B'
+    }
+}
+
+CONCEPTS TO BE USED TO BUILD MULTITHREADED AND 
+MULTIPORCESS PROGRAMS IN C
+

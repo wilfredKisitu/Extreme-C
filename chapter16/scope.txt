@@ -1,0 +1,8 @@
+Chapter looks at the following 
+
+- Using mutexes to protect critical sections accessing a shared resource
+- Using POSIX condition variables to wait for specific conditions
+- Using various locks together with mutexes and condition variables
+- Using POXIS barriers and the way they can synchronize a number of threds
+- Concept of semaphores 
+- Memory  structure of a thread
